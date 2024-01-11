@@ -3,24 +3,30 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import morgan from "morgan";
 import User from "./routes/User.js";
+import Post from "./routes/Post.js";
 import dotenv from "dotenv";
-
+import cookieParser from "cookie-parser";
 const app = express();
 dotenv.config();
 
 app.use(
   cors({
-    origin: "*",
+    origin: "http://localhost:3000",
+    credentials: true,
   })
 );
 
 app.use(morgan("dev"));
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+// routes
 app.use("/user", User);
+app.use("/posts", Post);
 
 app.get("/", (req, res) => {
-  res.send("Hello, World");
+  res.send("Server is up and running...");
 });
 
 const PORT = process.env.PORT || 2000;
