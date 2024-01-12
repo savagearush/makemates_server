@@ -102,11 +102,28 @@ export function register(req, res) {
 }
 
 export async function getUserData(req, res) {
-  const { _id } = req.body;
+  const { _id } = req.user;
   DB.query("SELECT * FROM users WHERE id = ?", [_id], (err, result) => {
+    if (err) return res.status(401).send(err);
     if (result.length) {
-      const { password, ...userData } = result[0];
-      return res.send(userData);
+      result[0].password = "************";
+      return res.send(result[0]);
     }
   });
+}
+
+export function updateUserInfo(req, res) {
+  const { _id } = req.user;
+  const { key, value } = req.body;
+
+  if (key === "name") {
+    let query = `UPDATE users SET name = ? WHERE id = ?`;
+    DB.query(query, [value, _id], (err, result) => {
+      if (err) return res.status(401).send(err);
+      return res.status(200).send("Updated.");
+    });
+  }
+
+
+  
 }
